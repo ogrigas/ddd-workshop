@@ -1,28 +1,41 @@
+// This block is the new Gradle plugin syntax. The old syntax would be "apply plugin: 'java'"
 plugins {
+    // Java plugin will compile Java files when executing "gradle compile"
+    // and run Java unit tests when executing "gradle test"
     id "java"
+
+    // Shadow plugin will create uberjar (single jar with all dependencies) when executing "gradle shadowJar":
+    // it will be created in build/libs/ddd.jar - filename is based on shadowJar.archiveName setting
     id "com.github.johnrengelman.shadow" version "1.2.3"
 }
 
+// jcenter repository is a mirror of mavenCentral(), presumably faster
 repositories {
     jcenter()
 }
 
+// Dependency declaration syntax is: "{group}:{artifact}:{version}"
 dependencies {
+    // Guava library has a bunch of useful utilities that are missing in JDK, like immutable collections
     compile "com.google.guava:guava:21.0"
-    compile "org.eclipse.jetty:jetty-server:9.3.14.v20161028"
-    compile "ch.qos.logback:logback-classic:1.1.7"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.8.5"
 
+    // JUnit is the most popular unit-testing framework in Java
     testCompile "junit:junit:4.12"
+    // Hamcrest is a library of result matchers to be used in unit tests with assertThat()
     testCompile "org.hamcrest:hamcrest-library:1.3"
+    // Mockito is a mocking library (for tests) that can mock interactions with classes as well as interfaces
     testCompile "org.mockito:mockito-core:2.7.19"
 }
 
+// Java plugin exposes these configuration settings:
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+// Shadow plugin exposes these configuration settings:
 shadowJar {
     archiveName = "ddd.jar"
+    // We specify our application's entry-point class to be declared inside META-INF/MANIFEST.MF
+    // Its main() method will be called by Java runtime when executing "java -jar ddd.jar"
     manifest {
         attributes(
             "Main-Class": "ddd.EntryPoint"

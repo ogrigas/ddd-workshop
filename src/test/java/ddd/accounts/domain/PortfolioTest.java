@@ -10,9 +10,18 @@ import static ddd.accounts.domain.LedgerEntry.Type.CREDIT;
 import static ddd.accounts.domain.LedgerEntry.Type.DEBIT;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.contains;
 
+/**
+ * Example of testing pure domain logic - these are simple state-based tests, i.e. they don't mock anything.
+ *
+ * Most tests will have a Given-When-Then structure:
+ * - GIVEN zero or more preconditions
+ * - WHEN a single action is performed
+ * - THEN we assert one or more expectations
+ *
+ * In this case the GIVEN part is common to all test cases and is therefore moved to declaration of fields.
+ */
 public class PortfolioTest {
 
     private List<Account> accounts = asList(
@@ -27,13 +36,13 @@ public class PortfolioTest {
     public void transfers_funds_between_existing_accounts() {
         List<LedgerEntry> entries = portfolio.transferFunds(new IBAN("LT03"), new IBAN("LT01"), Amount.of(100));
 
-        assertThat(entries, hasSize(2));
-        assertThat(entries, hasItems(
+        assertThat(entries, contains(
             new LedgerEntry(DEBIT,  Amount.of(100), new Account(new IBAN("LT03"), Amount.of(2900))),
             new LedgerEntry(CREDIT, Amount.of(100), new Account(new IBAN("LT01"), Amount.of(1100)))
         ));
     }
 
+    // in this case the THEN part is the expected exception
     @Test(expected = ReservedBudgetExceeded.class)
     public void maintains_reserved_budget() {
         portfolio.withdrawFunds(new IBAN("LT03"), Amount.of(501));

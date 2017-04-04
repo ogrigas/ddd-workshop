@@ -14,6 +14,6 @@ public class EntryPoint {
 
         PortfolioFundsController controller = new PortfolioFundsController(accountRepo, limitsRepo, ledger);
 
-        System.out.println("TODO: start web server at port 8080");
+        System.out.println("TODO: start web server at port 8080 and route requests to controller");
     }
 }
